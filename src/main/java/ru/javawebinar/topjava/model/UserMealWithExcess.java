@@ -18,6 +18,10 @@ public class UserMealWithExcess {
         this.excess = excess;
     }
 
+    public UserMealWithExcess(UserMeal meal, boolean b) {
+        this(meal.getDateTime(), meal.getDescription(), meal.getCalories(), b);
+    }
+
     @Override
     public String toString() {
         return "UserMealWithExcess{" +
