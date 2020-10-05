@@ -16,18 +16,18 @@ import java.util.List;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
-    private static final Logger log = getLogger(UserServlet.class);
+    private static final Logger log = getLogger(MealServlet.class);
+
+    private static final int CAL_DAY_LIMIT = 2000;
+
+    private static final List<Meal> meals = MealsUtil.tmpInitMeal();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("redirect to meals");
+        log.debug("forward to meals.jsp");
 
-        List<Meal> meals = MealsUtil.tmpInitMeal();
-
-        List<MealTo> mealsTo = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
-
+        List<MealTo> mealsTo = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CAL_DAY_LIMIT);
         request.setAttribute("meals", mealsTo);
-
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 }

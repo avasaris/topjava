@@ -36,7 +36,6 @@
         <th>Description</th>
         <th>Calories</th>
     </tr>
-    <jsp:useBean id="meals" scope="request" type="ru.javawebinar.topjava.model.MealTo"/>
     <c:forEach var="meal" items="${meals}">
         <tr class="${meal.excess ? 'redText' : 'greenText'}">
             <td>
