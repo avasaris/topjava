@@ -1,5 +1,15 @@
 # TopJava Release Notes
 
+### Topjava 21
+- **добавили документирование REST API: Swagger**
+- мигрировали на JDK 15 и используем текстовые блоки
+- Вынес `produces = MediaType.APPLICATION_JSON_VALUE` на уровень контроллеров
+- Правильно используем [глабальные переменные в js](https://stackoverflow.com/a/5064235/548473)
+- Зарефакторил `inputField.tag`
+- Тестовые переменные переименовал из UPPERCASE в camelCase
+- Из тестов сервисов убрал `throws Exception` (в IDEA больше не генерятся по умолчанию)
+- **Мигрировали на Spring Boot 2.4.1**
+
 ### Topjava 20
 - мигрировали на JDK 14
 - в `@SafeHtml` запрещаем весь html (`whitelistType = NONE`)
@@ -29,7 +39,7 @@
 ### Topjava 18
 
 - В `ErrorType` добавил `HttpStatus status`
-- В PostgreSQL обнаружилась бага: граничное значение `0:00` из за ошибок округления попадает в предыдущий интервал.
+- В PostgreSQL обнаружилась бага: граничное значение `0:00` из-за ошибок округления попадает в предыдущий интервал.
 Мораль: всегда в тестах проверяйте граничные значения. Добавил этот случай в тестовые данные.
 - Изменил `MealRepository.getBetween` (принимаю `@Nullable LocalDate`). Изменились реализации.
 - Выделил метод `UserService.prepareAndSave`
