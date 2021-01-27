@@ -88,7 +88,10 @@
 - <a href="https://rabota.yandex.ru/search?job_industry=275&text=java">Яндекс агрегатор</a>
 - <a href="hh.ru">HH</a>
 - <a href="https://www.linkedin.com/">LinkedIn</a>
+- <a href="https://career.habr.com/">ХабрКарьера</a>
+- [headz.io](https://app.headz.io/candidates/new)
 - <a href="http://djinni.co/">djinni.co (более актуально для Украины)</a>
+
 
 ## Как выжить на испытательном сроке
 - Учись грамотно формулировать проблему. Проблема "у меня не работает" может иметь тысячи причин. В
@@ -108,6 +111,9 @@
 - [**Советы новичкам**](http://blog.csssr.ru/2016/09/19/how-to-be-a-beginner-developer)
 - [ТОП-13 ошибок начинающего программиста](https://proglib.io/p/beginners-fails/)
 - [25 ошибок начинающего программиста](https://habr.com/ru/post/413129/)
+- [Путеводитель по синдрому самозванца](https://vc.ru/hr/167443-eshche-odin-putevoditel-po-sindromu-samozvanca-korni-prichiny-simptomy-i-posledstviya-chast-1)
 - [Нетехнические навыки](https://tproger.ru/experts/softskills-for-job)
-
+- Типичные ошибки начинающих программистов от JavaRush:
+  - [Часть 1](https://javarush.ru/groups/posts/3044-razbor-tipichnihkh-oshibok-nachinajujshikh-programmistov-chastjh-1)
+  - [Часть 2](https://javarush.ru/groups/posts/3055-razbor-tipichnihkh-oshibok-nachinajujshikh-programmistov-chastjh-2)
 ## [Отзывы по стажировке Topjava](https://vk.com/topic-74381644_30447246)
