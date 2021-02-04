@@ -1,51 +1,18 @@
-Index: src/main/java/ru/javawebinar/topjava/model/MealTo.java
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
---- src/main/java/ru/javawebinar/topjava/model/MealTo.java	(revision 160f4163e4f8ab22f9b156d1af61cb2b44cc6bd6)
-+++ src/main/java/ru/javawebinar/topjava/model/MealTo.java	(date 1601384001297)
-@@ -9,7 +9,10 @@
- 
-     private final int calories;
- 
--    private final boolean excess;
-+//    private final AtomicBoolean excess;      // filteredByAtomic (or Boolean[])
-+//    private final Boolean excess;            // filteredByReflection
-+//    private final Supplier<Boolean> excess;  // filteredByClosure
-+    private boolean excess;
- 
-     public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
-         this.dateTime = dateTime;
-@@ -17,6 +20,15 @@
-         this.calories = calories;
-         this.excess = excess;
-     }
-+
-+//    public Boolean getExcess() {
-+//        return excess.get();
-+//    }
-+
-+    // for filteredBySetterRecursion
-+    public void setExcess(boolean excess) {
-+        this.excess = excess;
-+    }
- 
-     @Override
-     public String toString() {
 Index: src/main/java/ru/javawebinar/topjava/util/MealsUtil.java
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- src/main/java/ru/javawebinar/topjava/util/MealsUtil.java	(revision 160f4163e4f8ab22f9b156d1af61cb2b44cc6bd6)
-+++ src/main/java/ru/javawebinar/topjava/util/MealsUtil.java	(date 1601386906224)
-@@ -8,12 +8,19 @@
+diff --git a/src/main/java/ru/javawebinar/topjava/util/MealsUtil.java b/src/main/java/ru/javawebinar/topjava/util/MealsUtil.java
+--- a/src/main/java/ru/javawebinar/topjava/util/MealsUtil.java	(revision c5446ed55a055743055537a475d0005bff9f75a8)
++++ b/src/main/java/ru/javawebinar/topjava/util/MealsUtil.java	(date 1612385502625)
+@@ -8,12 +8,20 @@
  import java.time.LocalTime;
  import java.time.Month;
  import java.util.*;
 +import java.util.concurrent.*;
 +import java.util.concurrent.locks.ReentrantLock;
++import java.util.function.Consumer;
 +import java.util.function.Predicate;
 +import java.util.stream.Collector;
  import java.util.stream.Collectors;
@@ -61,27 +28,34 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
          List<Meal> meals = Arrays.asList(
                  new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                  new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-@@ -31,6 +38,19 @@
+@@ -31,6 +39,26 @@
          mealsTo.forEach(System.out::println);
  
          System.out.println(filteredByCycles(meals, startTime, endTime, 2000));
++
++// Optional2 recursion
 +        System.out.println(filteredByRecursion(meals, startTime, endTime, 2000));
 +        System.out.println(filteredBySetterRecursion(meals, startTime, endTime, 2000));
 +
-+//        System.out.println(filteredByAtomic(meals, startTime, endTime, 2000));  // other solution: Boolean[1]
++//  Optional2 reference type
++//        System.out.println(filteredByAtomic(meals, startTime, endTime, 2000));  // or Boolean[1]
 +//        System.out.println(filteredByReflection(meals, startTime, endTime, 2000));
-+//        System.out.println(filteredByClosure(meals, startTime, endTime, 2000));
 +
++//   Optional2 delayed execution
++//      System.out.println(filteredByClosure(meals, startTime, endTime, 2000));
 +        System.out.println(filteredByExecutor(meals, startTime, endTime, 2000));
 +        System.out.println(filteredByLock(meals, startTime, endTime, 2000));
 +        System.out.println(filteredByCountDownLatch(meals, startTime, endTime, 2000));
 +        System.out.println(filteredByPredicate(meals, startTime, endTime, 2000));
++        System.out.println(filteredByConsumerChain(meals, startTime, endTime, 2000));
++
++//   Optional2 streams
 +        System.out.println(filteredByFlatMap(meals, startTime, endTime, 2000));
 +        System.out.println(filteredByCollector(meals, startTime, endTime, 2000));
      }
  
      public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-@@ -60,6 +80,248 @@
+@@ -60,6 +88,263 @@
          return mealsTo;
      }
  
@@ -281,6 +255,21 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +        return mealsTo;
 +    }
 +
++    public static List<MealTo> filteredByConsumerChain(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
++        Map<LocalDate, Integer> caloriesPerDays = new HashMap<>();
++        List<MealTo> result = new ArrayList<>();
++        Consumer<Void> consumer = dummy -> {};
++
++        for (Meal meal : meals) {
++            caloriesPerDays.merge(meal.getDate(), meal.getCalories(), Integer::sum);
++            if (TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)) {
++                consumer = consumer.andThen(dummy -> result.add(createTo(meal, caloriesPerDays.get(meal.getDateTime().toLocalDate()) > caloriesPerDay)));
++            }
++        }
++        consumer.accept(null);
++        return result;
++    }
++
 +    private static List<MealTo> filteredByFlatMap(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 +        Collection<List<Meal>> list = meals.stream()
 +                .collect(Collectors.groupingBy(Meal::getDate)).values();
@@ -330,3 +319,39 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
      private static MealTo createTo(Meal meal, boolean excess) {
          return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
      }
+Index: src/main/java/ru/javawebinar/topjava/model/MealTo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/javawebinar/topjava/model/MealTo.java b/src/main/java/ru/javawebinar/topjava/model/MealTo.java
+--- a/src/main/java/ru/javawebinar/topjava/model/MealTo.java	(revision c5446ed55a055743055537a475d0005bff9f75a8)
++++ b/src/main/java/ru/javawebinar/topjava/model/MealTo.java	(date 1612385417276)
+@@ -9,7 +9,10 @@
+ 
+     private final int calories;
+ 
+-    private final boolean excess;
++//    private final AtomicBoolean excess;      // or Boolean[1],  filteredByAtomic
++//    private final Boolean excess;            // filteredByReflection
++//    private final Supplier<Boolean> excess;  // filteredByClosure
++    private boolean excess;
+ 
+     public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
+         this.dateTime = dateTime;
+@@ -17,6 +20,15 @@
+         this.calories = calories;
+         this.excess = excess;
+     }
++
++//    public Boolean getExcess() {
++//        return excess.get();
++//    }
++
++    // for filteredBySetterRecursion
++    public void setExcess(boolean excess) {
++        this.excess = excess;
++    }
+ 
+     @Override
+     public String toString() {
