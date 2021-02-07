@@ -92,7 +92,7 @@ Java Enterprise Online Project
 - Оцените Time complexity алгоритма. Если она больше O(N), например O(N*N) или N*log(N), сделайте O(N).
 ```
 -  <a href="http://www.mscharhag.com/2014/02/java-8-datetime-api.html">Java 8 Date and Time API</a>
--  <a href="https://tproger.ru/translations/algorithms-and-data-structures">Алгоритмы и структуры данных для начинающих: сложность алгоритмов</a>
+-  <a href="http://web.archive.org/web/20201128101944/https://tproger.ru/translations/algorithms-and-data-structures/">Алгоритмы и структуры данных для начинающих: сложность алгоритмов</a>
 -  [Головач: сложность алгоритмов в теме коллекций](https://www.youtube.com/watch?v=Ek9ijOiplNE&feature=youtu.be&t=778)
 -  <a href="https://drive.google.com/file/d/0B9Ye2auQ_NsFNEJWRFJkVDA3TkU/view">Time complexity</a>
 -  <a href="https://ru.wikipedia.org/wiki/Временная_сложность_алгоритма">Временная сложность алгоритма</a>
@@ -148,7 +148,7 @@ Java Enterprise Online Project
   
 ## ![error](https://cloud.githubusercontent.com/assets/13649199/13672935/ef09ec1e-e6e7-11e5-9f79-d1641c05cbe6.png) Замечания к HW0
 - 1: Код проекта менять можно! Одна из распространенных ошибок как в тестовых заданиях на собеседовании, так и при работе на проекте, что ничего нельзя менять. Конечно при правках в рабочем проекте обязательно нужно проконсультироваться/проревьюироваться у авторов кода (находится по истории VCS)
-- 2: Наследовать `UserMealWithExcess` от `UserMeal` я не буду, т.к. это разные сущности: Transfer Object и Entity. Мы будет их проходить на 2м уроке.
+- 2: Наследовать `UserMealWithExcess` от `UserMeal` нельзя, т.к. это разные сущности: Transfer Object и Entity. Мы будет их проходить на 2м уроке. Это относится и к зависимости.
 - 3: Правильная реализация должна быть простой и красивой, можно сделать 2-мя способами: через стримы и через циклы. Сложность должна быть O(N), т.е. без вложенных стримов и циклов.
 - 4: При реализации через циклы посмотрите в `Map` на методы `getOrDefault` или `merge`
 - 5: **При реализации через `Stream` заменяйте `forEach` оператором `stream.map(..)`**
@@ -192,12 +192,13 @@ Java Enterprise Online Project
 - <a href="http://www.quizful.net/post/java-reflection-api">Введение в Java Reflection API</a>
 - <a href="https://habrahabr.ru/users/tarzan82/topics/">Структуры данных в картинках</a>
 - <a href="https://habrahabr.ru/company/luxoft/blog/157273/">Обзор java.util.concurrent.*</a>
-- <a href="http://www.skipy.ru/technics/synchronization.html">Синхронизация потоков</a>
+- <a href="http://web.archive.org/web/20200808064416/http://www.skipy.ru/technics/synchronization.html">Синхронизация потоков</a>
 - <a href="http://java67.blogspot.ru/2014/08/difference-between-string-literal-and-new-String-object-Java.html">String literal pool</a>
 - <a href="https://habrahabr.ru/post/132241/">Маленькие хитрости Java</a>
 -  <a href="https://github.com/winterbe/java8-tutorial">A Guide to Java 8</a>
 
 ### Туториалы, разное
+- [Открытый курс: Spring Boot + HATEOAS](https://javaops.ru/view/bootjava)
 - [Что нужно знать о бэкенде новичку в веб-разработке](https://tproger.ru/translations/backend-web-development)
 - [Туториалы: Spring Framework, Hibernate, Java Core, JDBC](http://proselyte.net/tutorials/)
 
