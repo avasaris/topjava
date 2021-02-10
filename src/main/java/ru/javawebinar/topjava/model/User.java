@@ -6,18 +6,13 @@ import java.util.Set;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
-public class User extends AbstractNamedEntity {
+public class User extends AbstractNamedEntity implements Comparable<User> {
 
+    private final Set<Role> roles;
     private String email;
-
     private String password;
-
     private boolean enabled = true;
-
     private Date registered = new Date();
-
-    private Set<Role> roles;
-
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     public User(Integer id, String name, String email, String password, Role role, Role... roles) {
@@ -41,20 +36,12 @@ public class User extends AbstractNamedEntity {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Date getRegistered() {
         return registered;
     }
 
     public void setRegistered(Date registered) {
         this.registered = registered;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public int getCaloriesPerDay() {
@@ -69,12 +56,20 @@ public class User extends AbstractNamedEntity {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -87,5 +82,15 @@ public class User extends AbstractNamedEntity {
                 ", roles=" + roles +
                 ", caloriesPerDay=" + caloriesPerDay +
                 ')';
+    }
+
+
+    @Override
+    public int compareTo(User user) {
+        if (name.equals(user.getName())) {
+            return email.compareTo(user.getEmail());
+        } else {
+            return name.compareTo(user.getName());
+        }
     }
 }
