@@ -16,7 +16,7 @@ public class DateTimeUtil {
         return ld.compareTo(startDate) >= 0 && ld.compareTo(endDate) <= 0;
     }
 
-    public static boolean isBetweenTime(LocalTime lt, LocalTime startTime, LocalTime endTime) {
+    public static boolean isBetweenTimes(LocalTime lt, LocalTime startTime, LocalTime endTime) {
         return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) <= 0;
     }
 

@@ -36,12 +36,16 @@ public class MealService {
         return repository.getAll(userId, meal -> true);
     }
 
-    public void update(Meal meal, int userId) {
+    public void update(Meal meal, int mealId, int userId) {
+        if (get(mealId, userId) == null) {
+            throw new IllegalArgumentException("Meal id=" + mealId + " did not belongs to User id=" + userId);
+        }
+        meal.setUserId(userId);
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
     public Collection<Meal> getAll(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         return repository.getAll(userId, meal -> DateTimeUtil.isBetweenDays(meal.getDate(), startDate, endDate)
-                && DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
+                && DateTimeUtil.isBetweenTimes(meal.getTime(), startTime, endTime));
     }
 }

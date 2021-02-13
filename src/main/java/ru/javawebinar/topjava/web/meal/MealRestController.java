@@ -54,8 +54,8 @@ public class MealRestController {
                 MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
-    public void update(Meal meal, int id) {
-        log.info("update {} with id={}", meal, id);
-        service.update(meal, SecurityUtil.authUserId());
+    public void update(Meal meal, int mealId) {
+        log.info("update {} with id={}", meal, mealId);
+        service.update(meal, mealId, SecurityUtil.authUserId());
     }
 }
