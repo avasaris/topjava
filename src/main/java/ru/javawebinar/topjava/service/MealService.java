@@ -3,9 +3,11 @@ package ru.javawebinar.topjava.service;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collection;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
@@ -30,11 +32,16 @@ public class MealService {
         return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public List<Meal> getAll(int userId) {
-        return new ArrayList<>(repository.getAll(userId));
+    public Collection<Meal> getAll(int userId) {
+        return repository.getAll(userId, meal -> true);
     }
 
     public void update(Meal meal, int userId) {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
+    }
+
+    public Collection<Meal> getAll(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        return repository.getAll(userId, meal -> DateTimeUtil.isBetweenDays(meal.getDate(), startDate, endDate)
+                && DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
     }
 }

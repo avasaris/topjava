@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -54,10 +55,11 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
+    public Collection<Meal> getAll(int userId, Predicate<Meal> predicate) {
         return repository.values()
                 .stream()
                 .filter(meal -> meal.getUserId() == userId)
+                .filter(predicate)
                 .sorted(MEAL_COMPARATOR)
                 .collect(Collectors.toList());
     }

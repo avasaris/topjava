@@ -2,10 +2,10 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
-import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,11 +19,21 @@ import java.util.Objects;
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
-    private MealRepository repository;
+    private final MealRestController controller;
+    private final ConfigurableApplicationContext appCtx;
+
+    public MealServlet() {
+        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
+            this.appCtx = appCtx;
+            controller = appCtx.getBean(MealRestController.class);
+        }
+    }
 
     @Override
-    public void init() {
-        repository = new InMemoryMealRepository();
+    public void destroy() {
+        if (appCtx != null) {
+            appCtx.close();
+        }
     }
 
     @Override
@@ -36,9 +46,13 @@ public class MealServlet extends HttpServlet {
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")),
                 SecurityUtil.authUserId());
-
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        repository.save(meal, SecurityUtil.authUserId());
+        if (meal.isNew()) {
+            log.info("Create {}", meal);
+            controller.create(meal);
+        } else {
+            log.info("Update {}", meal);
+            controller.update(meal, meal.getId());
+        }
         response.sendRedirect("meals");
     }
 
@@ -50,22 +64,34 @@ public class MealServlet extends HttpServlet {
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);
-                repository.delete(id, SecurityUtil.authUserId());
+                controller.delete(id);
                 response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000, SecurityUtil.authUserId()) :
-                        repository.get(getId(request), SecurityUtil.authUserId());
+                        controller.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
+                break;
+            case "filter":
+                log.info("filter");
+                request.setAttribute("startDate", request.getParameter("startDate"));
+                request.setAttribute("startTime", request.getParameter("startTime"));
+                request.setAttribute("endDate", request.getParameter("endDate"));
+                request.setAttribute("endTime", request.getParameter("endTime"));
+                request.setAttribute("meals", controller.getAll(
+                        request.getParameter("startDate"),
+                        request.getParameter("startTime"),
+                        request.getParameter("endDate"),
+                        request.getParameter("endTime")));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals",
-                        MealsUtil.getTos(repository.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                request.setAttribute("meals", controller.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
