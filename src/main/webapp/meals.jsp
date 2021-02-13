@@ -32,6 +32,15 @@
             vertical-align: top;
         }
     </style>
+    <script type="application/javascript">
+        function resetAndSubmitForm() {
+            document.filterForm.startDate.value = "";
+            document.filterForm.startTime.value = "";
+            document.filterForm.endDate.value = "";
+            document.filterForm.endTime.value = "";
+            document.filterForm.submit();
+        }
+    </script>
 </head>
 <body>
 <section>
@@ -39,26 +48,26 @@
     <hr/>
     <h2>Meals</h2>
 
-    <form method="get" action="meals">
+    <form method="get" action="meals" name="filterForm">
         <input type="hidden" name="action" value="filter">
         <dl>
             <dt>startDate:</dt>
-            <dd><input type="date" value="${startDate}" name="startDate" required></dd>
+            <dd><input type="date" value="${startDate}" name="startDate"></dd>
         </dl>
         <dl>
             <dt>startTime:</dt>
-            <dd><input type="time" value="${startTime}" name="startTime" required></dd>
+            <dd><input type="time" value="${startTime}" name="startTime"></dd>
         </dl>
         <dl>
             <dt>endDate:</dt>
-            <dd><input type="date" value="${endDate}" name="endDate" required></dd>
+            <dd><input type="date" value="${endDate}" name="endDate"></dd>
         </dl>
         <dl>
             <dt>endTime:</dt>
-            <dd><input type="time" value="${endTime}" name="endTime" required></dd>
+            <dd><input type="time" value="${endTime}" name="endTime"></dd>
         </dl>
         <button type="submit">Set filter</button>
-        <!-- <button onclick="window.history.back()" type="button">Cancel</button> -->
+        <button onclick="resetAndSubmitForm();" type="button">Reset</button>
     </form>
 
     <a href="meals?action=create">Add Meal</a>

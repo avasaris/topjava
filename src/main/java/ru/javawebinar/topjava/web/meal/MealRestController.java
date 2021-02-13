@@ -40,15 +40,15 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return getAll(null, null, null, null);
+        return getAll("", "", "", "");
     }
 
     public List<MealTo> getAll(String startDate, String startTime, String endDate, String endTime) {
         log.info("getAll startDate={}, startTime={}, endDate={}, endTime={}", startDate, startTime, endDate, endTime);
-        LocalDate saveStartDate = startDate == null ? LocalDate.MIN : LocalDate.parse(startDate);
-        LocalDate saveEndDate = endDate == null ? LocalDate.MAX : LocalDate.parse(endDate);
-        LocalTime saveStartTime = startTime == null ? LocalTime.MIN : LocalTime.parse(startTime);
-        LocalTime saveEndTime = endTime == null ? LocalTime.MAX : LocalTime.parse(endTime);
+        LocalDate saveStartDate = startDate.isEmpty() ? LocalDate.MIN : LocalDate.parse(startDate);
+        LocalDate saveEndDate = endDate.isEmpty() ? LocalDate.MAX : LocalDate.parse(endDate);
+        LocalTime saveStartTime = startTime.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTime);
+        LocalTime saveEndTime = endTime.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTime);
         return MealsUtil.getTos(
                 service.getAll(SecurityUtil.authUserId(), saveStartDate, saveStartTime, saveEndDate, saveEndTime),
                 MealsUtil.DEFAULT_CALORIES_PER_DAY);
