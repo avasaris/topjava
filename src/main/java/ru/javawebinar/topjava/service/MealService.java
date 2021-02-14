@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -33,19 +34,18 @@ public class MealService {
     }
 
     public Collection<Meal> getAll(int userId) {
-        return repository.getAll(userId, meal -> true);
+        return repository.getAll(userId);
     }
 
     public void update(Meal meal, int mealId, int userId) {
         if (get(mealId, userId) == null) {
-            throw new IllegalArgumentException("Meal id=" + mealId + " did not belongs to User id=" + userId);
+            throw new NotFoundException("Meal id=" + mealId + " did not belongs to User id=" + userId);
         }
         meal.setUserId(userId);
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
     public Collection<Meal> getAll(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        return repository.getAll(userId, meal -> DateTimeUtil.isBetweenDays(meal.getDate(), startDate, endDate)
-                && DateTimeUtil.isBetweenTimes(meal.getTime(), startTime, endTime));
+        return repository.getAll(userId, startDate, startTime, endDate, endTime);
     }
 }
