@@ -38,8 +38,4 @@ public class DateTimeUtil {
     LocalTime parseLocalTime(@Nullable String str) {
         return StringUtils.hasLength(str) ? LocalTime.parse(str) : null;
     }
-
-    public static Timestamp toTimestamp(LocalDateTime ldt){
-        return Timestamp.valueOf(ldt);
-    }
 }
