@@ -17,7 +17,7 @@ public class Profiles {
             HSQL_DB = "hsqldb";
 
     //  Get DB profile depending of DB driver in classpath
-    public static String getActiveDbProfile() {
+    private static String getActiveDbProfile() {
         if (ClassUtils.isPresent("org.postgresql.Driver", null)) {
             return POSTGRES_DB;
         } else if (ClassUtils.isPresent("org.hsqldb.jdbcDriver", null)) {
@@ -27,10 +27,17 @@ public class Profiles {
         }
     }
 
+    // Get Repository profile
+//    private static String getActiveRepositoryProfile() {
+//        return REPOSITORY_IMPLEMENTATION;
+//    }
+
     //http://stackoverflow.com/questions/23871255/spring-profiles-simple-example-of-activeprofilesresolver
     public static class ActiveDbProfileResolver implements ActiveProfilesResolver {
         @Override
-        public @NonNull String[] resolve(@NonNull Class<?> aClass) {
+        public @NonNull
+        String[] resolve(@NonNull Class<?> aClass) {
+//            return new String[]{getActiveDbProfile(), getActiveRepositoryProfile()};
             return new String[]{getActiveDbProfile()};
         }
     }

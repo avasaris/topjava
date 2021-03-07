@@ -17,6 +17,7 @@
             <pattern>%magenta(%msg%n)</pattern>
         </encoder>
     </appender>
+
     <logger name="result" level="INFO" additivity="false">
         <appender-ref ref="result"/>
     </logger>
