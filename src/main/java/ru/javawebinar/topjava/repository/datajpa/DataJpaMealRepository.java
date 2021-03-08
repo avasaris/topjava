@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,12 +16,15 @@ public class DataJpaMealRepository implements MealRepository {
     private final CrudMealRepository crudMealRepository;
     private final CrudUserRepository crudUserRepository;
 
+    private final Sort SORT = Sort.by("dateTime").descending();
+
     public DataJpaMealRepository(CrudMealRepository crudMealRepository, CrudUserRepository crudUserRepository) {
         this.crudMealRepository = crudMealRepository;
         this.crudUserRepository = crudUserRepository;
     }
 
     @Override
+    @Transactional
     public Meal save(Meal meal, int userId) {
         User user = crudUserRepository.getOne(userId);
         meal.setUser(user);
@@ -32,11 +36,7 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        if (get(id, userId) != null) {
-            crudMealRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return crudMealRepository.delete(id, userId) != 0;
     }
 
     @Override
@@ -48,14 +48,12 @@ public class DataJpaMealRepository implements MealRepository {
     @Override
     public List<Meal> getAll(int userId) {
         User user = crudUserRepository.getOne(userId);
-        Sort sort = Sort.by("dateTime").descending();
-        return crudMealRepository.getByUser(user, sort);
+        return crudMealRepository.getByUser(user, SORT);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         User user = crudUserRepository.getOne(userId);
-        Sort sort = Sort.by("dateTime").descending();
-        return crudMealRepository.getByUserAndDateTimeGreaterThanEqualAndDateTimeLessThan(user, startDateTime, endDateTime, sort);
+        return crudMealRepository.getByUserAndDateTimeGreaterThanEqualAndDateTimeLessThan(user, startDateTime, endDateTime, SORT);
     }
 }

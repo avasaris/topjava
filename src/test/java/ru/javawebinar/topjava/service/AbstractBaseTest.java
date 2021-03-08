@@ -26,7 +26,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(resolver = Profiles.ActiveDbProfileResolver.class)
-abstract public class AbstractBaseTest {
+public abstract class AbstractBaseTest {
     private static final Logger log = getLogger("result");
 
     private static final StringBuilder results = new StringBuilder();
@@ -51,8 +51,9 @@ abstract public class AbstractBaseTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+
+        // How can I clear or empty a StringBuilder?
+        // https://stackoverflow.com/questions/5192512/how-can-i-clear-or-empty-a-stringbuilder
         results.setLength(0);
     }
-
-
 }
