@@ -16,7 +16,7 @@ public class DataJpaMealRepository implements MealRepository {
     private final CrudMealRepository crudMealRepository;
     private final CrudUserRepository crudUserRepository;
 
-    private final Sort SORT = Sort.by("dateTime").descending();
+    private static final Sort SORT = Sort.by("dateTime").descending();
 
     public DataJpaMealRepository(CrudMealRepository crudMealRepository, CrudUserRepository crudUserRepository) {
         this.crudMealRepository = crudMealRepository;
@@ -26,9 +26,9 @@ public class DataJpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        User user = crudUserRepository.getOne(userId);
-        meal.setUser(user);
         if (meal.isNew() || get(meal.getId(), userId) != null) {
+            User user = crudUserRepository.getOne(userId);
+            meal.setUser(user);
             return crudMealRepository.save(meal);
         }
         return null;

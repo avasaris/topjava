@@ -6,14 +6,12 @@ import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.Profiles;
+import ru.javawebinar.topjava.ActiveDbProfileResolver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +23,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = Profiles.ActiveDbProfileResolver.class)
+@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class AbstractBaseTest {
     private static final Logger log = getLogger("result");
 
@@ -41,8 +39,6 @@ public abstract class AbstractBaseTest {
             log.info(result + " ms\n");
         }
     };
-    @Autowired
-    protected CacheManager cacheManager;
 
     @AfterClass
     public static void printResult() {
