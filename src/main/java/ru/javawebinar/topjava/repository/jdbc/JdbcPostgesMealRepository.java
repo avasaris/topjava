@@ -17,11 +17,6 @@ public class JdbcPostgesMealRepository extends JdbcAbstractMealRepository {
     }
 
     @Override
-    protected void addSqlParameter(MapSqlParameterSource map, String name, LocalDateTime dateTime) {
-        map.addValue(name, dateTime);
-    }
-
-    @Override
     protected LocalDateTime dateAdapter(LocalDateTime ldt) {
         return ldt;
     }

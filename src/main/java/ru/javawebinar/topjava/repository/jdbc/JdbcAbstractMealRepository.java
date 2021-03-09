@@ -40,10 +40,8 @@ public abstract class JdbcAbstractMealRepository implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", meal.getDateTime())
+                .addValue("date_time", dateAdapter(meal.getDateTime()))
                 .addValue("user_id", userId);
-
-        addSqlParameter(map, "date_time", meal.getDateTime());
 
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
@@ -58,9 +56,6 @@ public abstract class JdbcAbstractMealRepository implements MealRepository {
         }
         return meal;
     }
-
-    protected abstract void addSqlParameter(MapSqlParameterSource map, String name, LocalDateTime dateTime);
-
 
     @Override
     public boolean delete(int id, int userId) {

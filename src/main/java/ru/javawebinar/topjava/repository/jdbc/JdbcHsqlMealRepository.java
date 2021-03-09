@@ -18,11 +18,6 @@ public class JdbcHsqlMealRepository extends JdbcAbstractMealRepository {
     }
 
     @Override
-    protected void addSqlParameter(MapSqlParameterSource map, String name, LocalDateTime dateTime) {
-        map.addValue(name, Timestamp.valueOf(dateTime));
-    }
-
-    @Override
     protected Object dateAdapter(LocalDateTime ldt) {
         return Timestamp.valueOf(ldt);
     }
