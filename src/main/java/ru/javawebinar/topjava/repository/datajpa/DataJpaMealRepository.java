@@ -13,10 +13,9 @@ import java.util.List;
 @Repository
 public class DataJpaMealRepository implements MealRepository {
 
+    private static final Sort SORT = Sort.by("dateTime").descending();
     private final CrudMealRepository crudMealRepository;
     private final CrudUserRepository crudUserRepository;
-
-    private static final Sort SORT = Sort.by("dateTime").descending();
 
     public DataJpaMealRepository(CrudMealRepository crudMealRepository, CrudUserRepository crudUserRepository) {
         this.crudMealRepository = crudMealRepository;
