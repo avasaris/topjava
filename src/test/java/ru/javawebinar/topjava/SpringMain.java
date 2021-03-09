@@ -18,7 +18,12 @@ public class SpringMain {
     public static void main(String[] args) {
         // java 7 automatic resource management (ARM)
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/inmemory.xml")) {
-            System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
+            System.out.println("Bean definition names 1: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
+            System.out.println("Bean environment 1: " + appCtx.getEnvironment());
+            appCtx.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.REPOSITORY_IMPLEMENTATION);
+            appCtx.refresh();
+            System.out.println("Bean definition names 2: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
+            System.out.println("Bean environment 2: " + appCtx.getEnvironment());
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
             System.out.println();
