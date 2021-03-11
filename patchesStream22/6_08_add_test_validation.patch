@@ -5,7 +5,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/src/test/java/ru/javawebinar/topjava/service/AbstractMealServiceTest.java b/src/test/java/ru/javawebinar/topjava/service/AbstractMealServiceTest.java
 --- a/src/test/java/ru/javawebinar/topjava/service/AbstractMealServiceTest.java	(revision cfd7a824c7bcd652c00a34dda583e72892f03641)
-+++ b/src/test/java/ru/javawebinar/topjava/service/AbstractMealServiceTest.java	(date 1615378653925)
++++ b/src/test/java/ru/javawebinar/topjava/service/AbstractMealServiceTest.java	(date 1615472741335)
 @@ -7,9 +7,11 @@
  import ru.javawebinar.topjava.model.Meal;
  import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -32,73 +32,6 @@ diff --git a/src/test/java/ru/javawebinar/topjava/service/AbstractMealServiceTes
 +    }
  }
 \ No newline at end of file
-Index: src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java b/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java
---- a/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java	(revision cfd7a824c7bcd652c00a34dda583e72892f03641)
-+++ b/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java	(date 1615378653940)
-@@ -8,9 +8,13 @@
- import ru.javawebinar.topjava.UserTestData;
- import ru.javawebinar.topjava.model.Role;
- import ru.javawebinar.topjava.model.User;
-+import ru.javawebinar.topjava.repository.JpaUtil;
- import ru.javawebinar.topjava.util.exception.NotFoundException;
- 
-+import javax.validation.ConstraintViolationException;
-+import java.util.Date;
- import java.util.List;
-+import java.util.Set;
- 
- import static org.junit.Assert.assertThrows;
- import static ru.javawebinar.topjava.UserTestData.*;
-@@ -84,4 +88,13 @@
-         List<User> all = service.getAll();
-         USER_MATCHER.assertMatch(all, admin, user);
-     }
-+
-+    @Test
-+    public void createWithException() throws Exception {
-+        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
-+        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
-+        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));
-+        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "password", 9, true, new Date(), Set.of())));
-+        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "password", 10001, true, new Date(), Set.of())));
-+    }
- }
-\ No newline at end of file
-Index: src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java b/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java
---- a/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java	(revision cfd7a824c7bcd652c00a34dda583e72892f03641)
-+++ b/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java	(date 1615376392486)
-@@ -1,6 +1,8 @@
- package ru.javawebinar.topjava.util;
- 
- 
-+import org.springframework.core.NestedExceptionUtils;
-+import org.springframework.lang.NonNull;
- import ru.javawebinar.topjava.model.AbstractBaseEntity;
- import ru.javawebinar.topjava.util.exception.NotFoundException;
- 
-@@ -42,4 +44,11 @@
-             throw new IllegalArgumentException(entity + " must be with id=" + id);
-         }
-     }
-+
-+    //  https://stackoverflow.com/a/65442410/548473
-+    @NonNull
-+    public static Throwable getRootCause(@NonNull Throwable t) {
-+        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
-+        return rootCause != null ? rootCause : t;
-+    }
- }
-\ No newline at end of file
 Index: src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.java
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -106,7 +39,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.java b/src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.java
 --- a/src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.java	(revision cfd7a824c7bcd652c00a34dda583e72892f03641)
-+++ b/src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.java	(date 1615378653931)
++++ b/src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.java	(date 1615472741341)
 @@ -13,6 +13,9 @@
  import ru.javawebinar.topjava.ActiveDbProfileResolver;
  import ru.javawebinar.topjava.TimingRules;
@@ -137,6 +70,70 @@ diff --git a/src/test/java/ru/javawebinar/topjava/service/AbstractServiceTest.ja
 +                throw getRootCause(e);
 +            }
 +        });
++    }
+ }
+\ No newline at end of file
+Index: src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java b/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java
+--- a/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java	(revision cfd7a824c7bcd652c00a34dda583e72892f03641)
++++ b/src/test/java/ru/javawebinar/topjava/service/AbstractUserServiceTest.java	(date 1615472779272)
+@@ -10,7 +10,10 @@
+ import ru.javawebinar.topjava.model.User;
+ import ru.javawebinar.topjava.util.exception.NotFoundException;
+ 
++import javax.validation.ConstraintViolationException;
++import java.util.Date;
+ import java.util.List;
++import java.util.Set;
+ 
+ import static org.junit.Assert.assertThrows;
+ import static ru.javawebinar.topjava.UserTestData.*;
+@@ -84,4 +87,13 @@
+         List<User> all = service.getAll();
+         USER_MATCHER.assertMatch(all, admin, user);
+     }
++
++    @Test
++    public void createWithException() throws Exception {
++        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
++        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
++        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));
++        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "password", 9, true, new Date(), Set.of())));
++        validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "password", 10001, true, new Date(), Set.of())));
++    }
+ }
+\ No newline at end of file
+Index: src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java b/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java
+--- a/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java	(revision cfd7a824c7bcd652c00a34dda583e72892f03641)
++++ b/src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java	(date 1615472741330)
+@@ -1,6 +1,8 @@
+ package ru.javawebinar.topjava.util;
+ 
+ 
++import org.springframework.core.NestedExceptionUtils;
++import org.springframework.lang.NonNull;
+ import ru.javawebinar.topjava.model.AbstractBaseEntity;
+ import ru.javawebinar.topjava.util.exception.NotFoundException;
+ 
+@@ -42,4 +44,11 @@
+             throw new IllegalArgumentException(entity + " must be with id=" + id);
+         }
+     }
++
++    //  https://stackoverflow.com/a/65442410/548473
++    @NonNull
++    public static Throwable getRootCause(@NonNull Throwable t) {
++        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
++        return rootCause != null ? rootCause : t;
 +    }
  }
 \ No newline at end of file
